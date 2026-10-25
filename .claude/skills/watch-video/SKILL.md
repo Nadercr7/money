@@ -27,7 +27,7 @@ Options:
 - `--max-frames N` (default 27 = 3 contact sheets). Shorts/TikToks: 9–18 is enough. Long videos (>20 min): 36–45.
 - `--no-frames` — transcript only; skips the video download when subtitles exist (fastest, for "what does he say" questions).
 - `--lang ar,en` — preferred subtitle languages (the video's original language is always tried first).
-- `--model small` — Whisper size. `base` is faster; `medium` is better for Arabic dialects but slow on CPU.
+- `--model small` — Whisper size. `base` is faster. For Egyptian/Arabic dialect `small` garbles names and numbers; use `medium` (or `large-v3`) when accuracy matters and you can wait (~1x–2x real-time on 4 CPU cores). Always tell the user which numbers came from a shaky transcript.
 - `--force-whisper` — ignore platform subtitles (use when auto-captions are garbage).
 - `--cookies cookies.txt` — for age-restricted videos or "Sign in to confirm you're not a bot".
 

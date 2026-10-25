@@ -149,8 +149,12 @@ def whisper_transcribe(video, work, model_name):
         log("installing faster-whisper ...")
         subprocess.run([sys.executable, "-m", "pip", "install", "-q", "faster-whisper"], check=False)
         from faster_whisper import WhisperModel
-    audio = os.path.join(work, "audio.wav")
-    run(["ffmpeg", "-y", "-v", "error", "-i", video, "-vn", "-ac", "1", "-ar", "16000", audio])
+    import numpy as np
+    # decode with ffmpeg ourselves: faster-whisper's PyAV decoder breaks on some av versions
+    pcm = subprocess.run(["ffmpeg", "-nostdin", "-v", "error", "-i", video, "-vn", "-f", "s16le",
+                          "-acodec", "pcm_s16le", "-ac", "1", "-ar", "16000", "-"],
+                         capture_output=True, check=True).stdout
+    audio = np.frombuffer(pcm, np.int16).astype(np.float32) / 32768.0
     log(f"transcribing with whisper '{model_name}' (CPU) ...")
     model = WhisperModel(model_name, device="cpu", compute_type="int8")
     segments, info = model.transcribe(audio, vad_filter=True, beam_size=1)
